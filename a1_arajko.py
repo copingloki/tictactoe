@@ -2,12 +2,79 @@
 Tic Tac Toe
 """
 
-'''test'''
-
 import math
 import time
-from player import HumanPlayer, RandomComputerPlayer, SmartComputerPlayer
+import random
 
+
+class Player():
+    def __init__(self, letter):
+        self.letter = letter
+
+    def get_move(self, game):
+        pass
+
+
+class HumanPlayer(Player):
+    def __init__(self, letter):
+        super().__init__(letter)
+
+    def get_move(self, game):
+        valid_square = False
+        val = None
+        while not valid_square:
+            square = input("X's turn. Input move (0-8): ")
+            try:
+                val = int(square)
+                if val not in game.available_moves():
+                    raise ValueError
+                valid_square = True
+            except ValueError:
+                print('Invalid square. Try again.')
+        return val
+
+class SmartComputerPlayer(Player):
+    def __init__(self, letter):
+        super().__init__(letter)
+
+    def get_move(self, game):
+        if len(game.available_moves()) == 9:
+            square = random.choice(game.available_moves())
+        else:
+            square = self.minimax(game, self.letter)['position']
+        return square
+
+    def minimax(self, state, player):
+        max_player = self.letter  # yourself
+        other_player = 'O' if player == 'X' else 'X'
+
+        # first we want to check if the previous move is a winner
+        if state.current_winner == other_player:
+            return {'position': None, 'score': 1 * (state.num_empty_squares() + 1) if other_player == max_player else -1 * (
+                        state.num_empty_squares() + 1)}
+        elif not state.empty_squares():
+            return {'position': None, 'score': 0}
+
+        if player == max_player:
+            best = {'position': None, 'score': -math.inf}  # each score should maximize
+        else:
+            best = {'position': None, 'score': math.inf}  # each score should minimize
+        for possible_move in state.available_moves():
+            state.make_move(possible_move, player)
+            sim_score = self.minimax(state, other_player)  # simulate a game after making that move
+
+            # undo move
+            state.board[possible_move] = ' '
+            state.current_winner = None
+            sim_score['position'] = possible_move  # this represents the move optimal next move
+
+            if player == max_player:  # X is max player
+                if sim_score['score'] > best['score']:
+                    best = sim_score
+            else:
+                if sim_score['score'] < best['score']:
+                    best = sim_score
+        return best
 
 class TicTacToe():
     def __init__(self):
@@ -18,7 +85,7 @@ class TicTacToe():
     def make_board():
         return [' ' for _ in range(9)]
     
-    print("Welcome to our tic tac toe game! This app uses a minimax")
+    print("\nWelcome to our tic tac toe game! \nThis app uses the minimax algorithm to make accurate moves against the user\n")
 
     def print_board(self):
         for row in [self.board[i*3:(i+1) * 3] for i in range(3)]:
@@ -71,11 +138,9 @@ class TicTacToe():
     def available_moves(self):
         return [i for i, x in enumerate(self.board) if x == " "]
 
-# ...
+replay = 'y'
 
-replay = 'y'  # Initialize the replay variable
-
-def play(game, x_player, o_player, print_game=True, replay='n'):  # Pass replay as a parameter
+def play(game, x_player, o_player, print_game=True, replay='n'):
 
     if print_game:
         game.print_board_nums()
@@ -98,7 +163,7 @@ def play(game, x_player, o_player, print_game=True, replay='n'):  # Pass replay 
                     print(letter + ' wins!')
                     replay = input("Would you like to play again? (y/n) ")  # Ask for replay input
 
-                return letter, replay  # Return both the winner and the replay decision
+                return letter, replay
 
             letter = 'O' if letter == 'X' else 'X'
 
@@ -107,13 +172,13 @@ def play(game, x_player, o_player, print_game=True, replay='n'):  # Pass replay 
     if print_game:
         print('It\'s a tie!')
 
-    return None, replay  # Return None for the winner if it's a tie
+    return None, replay  
 
 if __name__ == '__main__':
-    while replay == 'y':  # Keep playing as long as the player wants to replay
+    while replay == 'y':  
         x_player = SmartComputerPlayer('X')
         o_player = HumanPlayer('O')
         t = TicTacToe()
-        winner, replay = play(t, x_player, o_player, print_game=True, replay='y')  # Pass replay as 'y' to start
+        winner, replay = play(t, x_player, o_player, print_game=True, replay='y')
 
 
