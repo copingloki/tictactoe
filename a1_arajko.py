@@ -1,6 +1,6 @@
 """
 Anton Rajko
-___________
+Jerusha Stewart
 9/10/2023
 Assignment 1
 """
