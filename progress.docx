@@ -1,0 +1,50 @@
+Importing Required Libraries:
+-The code starts by importing the necessary libraries: math, time, and random.
+Player Classes:
+-There are three player classes defined: Player, HumanPlayer, and two AI player classes, SmartComputerPlayer and SmartComputerPlayerAlphaBeta.
+-Player is the base class for all players and provides a common structure for player objects.
+-HumanPlayer is a class for human players who input their moves through the console.
+-SmartComputerPlayer and SmartComputerPlayerAlphaBeta are AI player classes that use different algorithms to make intelligent moves.
+Class Definitions:
+-TicTacToe is defined as the main game class.
+Initialization and Welcome Message:
+-The code initializes the game board and sets the current winner to None.
+-It also prints a welcome message explaining that the game uses the minimax algorithm for AI moves.
+Printing the Game Board:
+-The print_board method is responsible for printing the Tic-Tac-Toe board to the console.
+Printing the Numbered Board:
+-The print_board_nums method prints the Tic-Tac-Toe board with numbers, so the user knows which square corresponds to which number.
+Making Moves:
+-The make_move method checks if a move is valid (square is empty) and updates the game board with the player's move.
+Determining the Winner:
+-The winner method checks if a player has won the game by examining rows, columns, and diagonals.
+Checking for Empty Squares:
+-The empty_squares method checks if there are any empty squares left on the board.
+Counting Empty Squares:
+-The num_empty_squares method returns the number of empty squares on the board.
+Listing Available Moves:
+-The available_moves method returns a list of available (empty) squares on the board.
+Game Initialization and Replay Variable:
+-The replay variable is set to 'y', indicating that the game can be replayed.
+Play Function:
+-The play function allows two players to take turns until there's a winner or a tie.
+-It alternates between the X player (AI) and the O player (human).
+The function takes arguments:
+-game: The TicTacToe instance.
+-x_player: The X player (AI).
+-o_player: The O player (human).
+-print_game: A boolean to determine if the game board should be printed.
+-replay: A variable to control whether the game should be replayed.
+Within the game loop:
+-The current player (X or O) is determined.
+-The player is asked to make a move using their respective get_move method.
+-The move is validated, and if valid, it's made on the board.
+-The board is printed if requested.
+-The game checks if there's a winner, and if so, it announces the winner and asks if the player wants to replay.
+-The game alternates between players until the board is full (tie) or someone wins.
+Main Function:
+-The main function is the entry point of the program.
+-It welcomes the user and allows them to choose between two AI players (regular minimax or minimax with alpha-beta pruning).
+-Then, it initializes the game with the chosen AI player and a human player and starts the game.
+Execution:
+-The code block at the end of the script runs the main function if the script is executed directly.
