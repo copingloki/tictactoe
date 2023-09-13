@@ -79,6 +79,52 @@ class SmartComputerPlayer(Player):
                 if sim_score['score'] < best['score']:
                     best = sim_score
         return best
+    
+class SmartComputerPlayerAlphaBeta(Player):
+    def __init__(self, letter):
+        super().__init__(letter)
+
+    def get_move(self, game):
+        if len(game.available_moves()) == 9:
+            square = random.choice(game.available_moves())
+        else:
+            square = self.minimax_alpha_beta(game, self.letter, -math.inf, math.inf)['position']
+        return square
+
+    def minimax_alpha_beta(self, state, player, alpha, beta):
+        max_player = self.letter
+        other_player = 'O' if player == 'X' else 'X'
+
+        if state.current_winner == other_player:
+            return {'position': None, 'score': 1 * (state.num_empty_squares() + 1) if other_player == max_player else -1 * (state.num_empty_squares() + 1)}
+        elif not state.empty_squares():
+            return {'position': None, 'score': 0}
+
+        if player == max_player:
+            best = {'position': None, 'score': -math.inf}
+        else:
+            best = {'position': None, 'score': math.inf}
+
+        for possible_move in state.available_moves():
+            state.make_move(possible_move, player)
+            sim_score = self.minimax_alpha_beta(state, other_player, alpha, beta)
+            state.board[possible_move] = ' '
+            state.current_winner = None
+            sim_score['position'] = possible_move
+
+            if player == max_player:
+                if sim_score['score'] > best['score']:
+                    best = sim_score
+                alpha = max(alpha, best['score']) #update alpha
+            else:
+                if sim_score['score'] < best['score']:
+                    best = sim_score
+                beta = min(beta, best['score'])
+
+            if alpha >= beta: #if this inequality is true, the beta value gets pruned
+                break
+
+        return best
 
 class TicTacToe():
     def __init__(self):
@@ -179,11 +225,24 @@ def play(game, x_player, o_player, print_game=True, replay='n'):
 
     return None, replay  
 
-if __name__ == '__main__':
-    while replay == 'y':  
-        x_player = SmartComputerPlayer('X')
+def main():
+    
+    replay = 'y'
+
+    while replay == 'y':
+        ai_option = input("Choose the AI player:\n1. Regular Minimax\n2. Minimax with Alpha-Beta Pruning\nEnter 1 or 2: ")
+
+        if ai_option == '1':
+            x_player = SmartComputerPlayer('X')
+        elif ai_option == '2':
+            x_player = SmartComputerPlayerAlphaBeta('X')
+        else:
+            print("Invalid option. Defaulting to Regular Minimax.")
+            x_player = SmartComputerPlayer('X')
+
         o_player = HumanPlayer('O')
         t = TicTacToe()
         winner, replay = play(t, x_player, o_player, print_game=True, replay='y')
 
-
+if __name__ == '__main__':
+    main()
